@@ -36,18 +36,16 @@ jobs:
       - name: Check out (or create) the gh-pages branch
         run: |
           set -euo pipefail
-          git clone --depth 1 --branch gh-pages \
-            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" pages \
-            || {
-              echo "gh-pages does not exist yet — creating it."
-              git clone --depth 1 \
-                "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" pages
-              cd pages
-              git checkout --orphan gh-pages
-              git rm -rf . >/dev/null 2>&1 || true
-              touch .nojekyll
-              git add -A
-            }
+          REMOTE="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          if git ls-remote --exit-code --heads "$REMOTE" gh-pages >/dev/null 2>&1; then
+            git clone --depth 1 --branch gh-pages "$REMOTE" pages
+          else
+            echo "gh-pages does not exist yet — creating it."
+            git clone --depth 1 "$REMOTE" pages
+            git -C pages checkout --orphan gh-pages
+            git -C pages rm -rf . >/dev/null 2>&1 || true
+          fi
+          test -d pages/.git
 
       - name: Work out where this build goes
         id: target
@@ -76,10 +74,11 @@ jobs:
           else
             find "$DEST" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
           fi
-          rsync -a --delete-excluded \
+          rsync -a \
             --exclude '.git' --exclude '.github' --exclude 'node_modules' \
             src/ "$DEST"/
           touch pages/.nojekyll
+          test -d pages/.git
 
       - name: Commit and push
         working-directory: pages
