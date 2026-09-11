@@ -43,31 +43,37 @@ filter buttons.
 
 ## The floorplan background
 
-The hero has a dotted "plotter drawing" trace of a unit floorplan running
-behind it. It does **not** load the floorplan image — that would be a 1MB
-PNG for a background texture. Instead the plan is reduced to a point cloud
-at build time and shipped as `assets/js/floorplan-data.js` (~9KB gzipped).
+A line drawing of a unit floorplan sits fixed behind the whole page and
+draws itself in once on load, left to right. It does **not** load the
+floorplan image - that would be a 1MB PNG for a background. The plan is
+run-length encoded at build time into `assets/js/floorplan-data.js`
+(~7KB gzipped) as solid runs, which render as continuous line work.
 
-To regenerate it from a different plan, drop the new image in and run:
+To regenerate it from a different plan, run this from `assets/img/`:
 
-```bash
-python3 - <<'PY'
+```python
 from PIL import Image
 import json
-G, THRESH, TARGET = 220, 145, 3600
+G, THRESH = 420, 150
 im = Image.open('floorplan.png').convert('L').resize((G, G), Image.LANCZOS)
 px = im.load()
-pts = [(x, y) for y in range(G) for x in range(G) if px[x, y] < THRESH]
-if len(pts) > TARGET:
-    step = len(pts) / TARGET
-    pts = [pts[int(i * step)] for i in range(TARGET)]
-pts.sort(key=lambda p: (p[0], p[1]))          # left-to-right sweep
-packed = [y * G + x for x, y in pts]
+runs = []
+for y in range(G):
+    x = 0
+    while x < G:
+        if px[x, y] < THRESH:
+            start = x
+            while x < G and px[x, y] < THRESH:
+                x += 1
+            runs.append((start, y, x - start))
+        else:
+            x += 1
+runs.sort(key=lambda r: (r[0], r[1]))      # left-to-right sweep
+flat = [v for r in runs for v in r]
 open('../js/floorplan-data.js', 'w').write(
-    f"window.FLOORPLAN={{g:{G},p:{json.dumps(packed, separators=(',', ':'))}}};\n")
-PY
+    'window.FLOORPLAN={g:%d,r:%s};\n' % (G, json.dumps(flat, separators=(',', ':'))))
 ```
 
-Tune `THRESH` up to catch fainter lines, `TARGET` for more or fewer dots.
-The points are sorted by x so the animation sweeps left to right like a
-plotter. Rendering lives in `initFloorPlan()` in `assets/js/main.js`.
+Raise `THRESH` to catch fainter lines, `G` for more detail at a larger
+payload. Rendering lives in `initFloorPlan()` in `assets/js/main.js` -
+size, position and opacity (`ALPHA`) are the knobs worth touching.
