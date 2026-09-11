@@ -133,6 +133,64 @@
     })(start);
   }
 
+  /* ---------- Hero carousel ---------- */
+  function initHeroCarousel() {
+    var root = $('#heroCarousel');
+    if (!root) return;
+    var track = $('.hc-track', root);
+    var slides = $$('.hc-slide', root);
+    var dots = $$('.hc-dot', root);
+    var prevBtn = $('.hc-prev', root);
+    var nextBtn = $('.hc-next', root);
+    var n = slides.length;
+    if (n < 2) return;
+    var i = 0;
+    var timer = null;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function show(idx) {
+      i = (idx + n) % n;
+      track.style.transform = 'translateX(-' + (i * 100) + '%)';
+      dots.forEach(function (d, di) {
+        var on = di === i;
+        d.classList.toggle('is-active', on);
+        d.setAttribute('aria-selected', String(on));
+      });
+    }
+    function next() { show(i + 1); }
+    function prev() { show(i - 1); }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    function play() { if (reduce) return; stop(); timer = setInterval(next, 5000); }
+
+    nextBtn.addEventListener('click', function () { next(); play(); });
+    prevBtn.addEventListener('click', function () { prev(); play(); });
+    dots.forEach(function (d, di) { d.addEventListener('click', function () { show(di); play(); }); });
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', play);
+    root.addEventListener('focusin', stop);
+    root.addEventListener('focusout', play);
+    root.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { prev(); play(); }
+      if (e.key === 'ArrowRight') { next(); play(); }
+    });
+
+    // Swipe on touch — a hero carousel that only responds to a mouse
+    // is a broken carousel on the phones most visitors will use.
+    var touchX = null;
+    track.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; stop(); }, { passive: true });
+    track.addEventListener('touchend', function (e) {
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
+      touchX = null;
+      play();
+    }, { passive: true });
+
+    show(0);
+    play();
+  }
+
   /* ---------- Before / after slider ---------- */
   function initBeforeAfter() {
     var range = $('#baRange'), before = $('#baBefore'), handle = $('#baHandle');
@@ -385,6 +443,7 @@
     initHeader();
     initNav();
     initReveal();
+    initHeroCarousel();
     initBeforeAfter();
     initFilters();
     initFaq();
