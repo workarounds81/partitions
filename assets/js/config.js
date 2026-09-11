@@ -4,15 +4,15 @@
    ============================================================ */
 window.SITE = {
   // ---- Business identity ----
-  name: "partition.work",
+  name: "partitionwork.com",
   tagline: "Partition & painting specialists — Singapore",
-  domain: "partition.work",            // used for sitemap/SEO, no https://
+  domain: "partitionwork.com",         // used for sitemap/SEO, no https://
 
   // ---- Contact ----
   // WhatsApp: country code + number, digits only. 65 = Singapore.
   whatsapp: "6580000000",             // TODO: replace with your real number
   whatsappDisplay: "+65 8000 0000",   // TODO: how it appears on screen
-  email: "hello@partition.work",      // TODO: replace with your real email
+  email: "hello@partitionwork.com",   // TODO: replace with your real email
   hours: "Mon–Sat, 9am – 7pm",
   serviceArea: "All of Singapore — HDB, condo, landed, commercial",
 

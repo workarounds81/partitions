@@ -1,5 +1,5 @@
 /* ============================================================
-   partition.work — behaviour
+   partitionwork.com — behaviour
    Plain JS, no dependencies, no build step.
    You shouldn't need to edit this file — edit config.js instead.
    ============================================================ */

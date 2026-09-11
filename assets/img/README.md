@@ -10,7 +10,7 @@ Recommended files (the placeholders on the site already point at these names):
 | `before.jpg` | Before/after slider, left side | 1600 × 900 |
 | `after.jpg` | Before/after slider, right side | 1600 × 900 |
 | `work-1.jpg` … `work-6.jpg` | Gallery grid | 1000 × 750 |
-| `og-image.jpg` | Link preview when shared on WhatsApp/Facebook | 1200 × 630 |
+| `og-image.png` | Link preview when shared on WhatsApp/Facebook | 1200 × 630 |
 
 **To use a real photo**, find the placeholder in `index.html`, e.g.
 
