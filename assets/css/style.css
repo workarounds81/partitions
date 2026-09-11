@@ -8,7 +8,7 @@
   /* Brand */
   --ink:#0E1620;
   --ink-2:#1B2735;
-  --muted:#5A6779;
+  --muted:#4F5C6B;
   --line:#E4E4DF;
   --paper:#FFFFFF;
   --paper-2:#F7F6F3;
@@ -183,27 +183,13 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 
 /* Floorplan trace behind the hero. Masked so it fades out under the
    headline — texture on the right, clear reading on the left. */
-/* Site-wide animated backdrop: the partition timelapse, reduced to black
-   and orange pixel dots. Sits under every block background and all text. */
-.site-bg{
-  position:fixed;inset:0;z-index:-1;pointer-events:none;
-  display:flex;align-items:center;justify-content:flex-end;
-  padding-right:clamp(12px,6vw,120px);
-  opacity:.32;
-  -webkit-mask-image:radial-gradient(120% 82% at 50% 50%,#000 40%,transparent 92%);
-  mask-image:radial-gradient(120% 82% at 50% 50%,#000 40%,transparent 92%);
-}
-/* Second mask on the image itself fades the left edge, so the dots thin out
-   where they would otherwise sit behind body copy and keep their density
-   out in the right margin. */
-.site-bg img{
-  height:78vh;width:auto;max-width:none;image-rendering:pixelated;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.22) 38%,rgba(0,0,0,.7) 70%,#000 100%);
-  mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.22) 38%,rgba(0,0,0,.7) 70%,#000 100%);
-}
+/* Site-wide animated backdrop: the partition timelapse, full-bleed and
+   centred. Shipped as a normal greyscale clip and washed out to light grey
+   on white by opacity here, so the tone is tunable without re-encoding. */
+.site-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.55}
+.site-bg img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
 @media (max-width:900px){
-  .site-bg{justify-content:center;padding-right:0;opacity:.22}
-  .site-bg img{height:56vh}
+  .site-bg{opacity:.45}
 }
 .marquee{position:relative;z-index:1}
 .hc-arrow{
