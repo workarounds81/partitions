@@ -10,9 +10,9 @@ window.SITE = {
 
   // ---- Contact ----
   // WhatsApp: country code + number, digits only. 65 = Singapore.
-  whatsapp: "6580000000",             // TODO: replace with your real number
-  whatsappDisplay: "+65 8000 0000",   // TODO: how it appears on screen
-  email: "hello@partitionwork.com",   // TODO: replace with your real email
+  whatsapp: "6598575090",
+  whatsappDisplay: "+65 9857 5090",
+  email: "info@partitionwork.com",
   hours: "Mon–Sat, 9am – 7pm",
   serviceArea: "All of Singapore — HDB, condo, landed, commercial",
 
