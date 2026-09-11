@@ -69,8 +69,10 @@ jobs:
           mkdir -p "$DEST"
           if [ "${{ steps.target.outputs.dir }}" = "." ]; then
             # Clear the live site but keep .git and any open PR previews
+            # Never delete CNAME: GitHub writes it when a custom domain is
+            # set in Settings, and removing it silently unsets the domain.
             find pages -mindepth 1 -maxdepth 1 \
-              ! -name '.git' ! -name 'pr-*' -exec rm -rf {} +
+              ! -name '.git' ! -name 'pr-*' ! -name 'CNAME' -exec rm -rf {} +
           else
             find "$DEST" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
           fi
