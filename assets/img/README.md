@@ -1,37 +1,42 @@
-# Photos go here
+# Photos
 
-Drop your job photos in this folder, then update the filenames in `index.html`.
+Real project photos are wired in and live on the site:
 
-Recommended files (the placeholders on the site already point at these names):
+| File | Used for |
+|---|---|
+| `Hero1.jpg` – `Hero4.jpg`, `hero5.jpg` | Hero carousel (5 slides, autoplay + swipe) |
+| `before.jpg` / `after.jpg` | Before/after slider in "Our work" |
+| `acousticfill.jpg`, `tampinespaint.jpg`, `Lcovelight.jpg`, `officemeetingroom.jpg`, `greenfeaturewall.jpg`, `aircontrunking.jpg` | Gallery grid, one per card |
+| `og-image.png` | Link preview when the site is shared on WhatsApp/Facebook |
 
-| File | Used for | Suggested size |
-|---|---|---|
-| `hero.jpg` | Main hero photo — your single best finished job | 1200 × 960 |
-| `before.jpg` | Before/after slider, left side | 1600 × 900 |
-| `after.jpg` | Before/after slider, right side | 1600 × 900 |
-| `work-1.jpg` … `work-6.jpg` | Gallery grid | 1000 × 750 |
-| `og-image.png` | Link preview when shared on WhatsApp/Facebook | 1200 × 630 |
+All were resized and re-compressed on the way in (originals were 1.6–2.2MB
+PNGs; JPEGs here are 65–210KB) — 22MB down to 1.7MB total, which matters a
+lot on mobile data.
 
-**To use a real photo**, find the placeholder in `index.html`, e.g.
+## Swapping a photo later
 
-```html
-<div class="ph" role="img" aria-label="Partition wall project">
-  <span class="ph-note">assets/img/work-1.jpg</span>
-</div>
+Find its `<img>` tag in `index.html` (search the filename) and either:
+
+- **Replace the file** at the same path, same filename — nothing else to touch, or
+- **Point the `src` at a new file** and update the `alt` text to match.
+
+If you're adding a new photo, compress it first — aim under 250KB. Free
+online tool: [squoosh.app](https://squoosh.app). Command line, if you have
+Python + Pillow:
+
+```bash
+python3 -c "
+from PIL import Image
+im = Image.open('yourphoto.png').convert('RGB')
+if im.width > 1400:
+    im = im.resize((1400, round(im.height * 1400 / im.width)))
+im.save('yourphoto.jpg', 'JPEG', quality=78, optimize=True)
+"
 ```
 
-and replace the whole `<div>` with:
+## Adding more to the gallery
 
-```html
-<img class="shot-img" src="assets/img/work-1.jpg" alt="Partition wall in a Punggol HDB flat" loading="lazy" width="1000" height="750">
-```
-
-Then add this once to the bottom of `assets/css/style.css`:
-
-```css
-.shot-img{border-radius:var(--radius);aspect-ratio:4/3;object-fit:cover;width:100%}
-```
-
-Tips: shoot in landscape, in daylight, with the room tidied. Compress before
-uploading (squoosh.app is free) — aim for under 300 KB per photo so the site
-stays fast on mobile data.
+Copy one `<figure class="shot reveal" data-cat="...">` block in `index.html`
+(under `#gallery`), point its `<img src>` at your new file, and set
+`data-cat` to `partition`, `painting`, or `ceiling` so it responds to the
+filter buttons.

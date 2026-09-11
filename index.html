@@ -80,8 +80,27 @@
     </div>
 
     <div class="hero-card reveal">
-      <div class="ph ph-hero" role="img" aria-label="Photo of a completed partition wall project">
-        <span class="ph-note">Replace with your best job photo<br><code>assets/img/hero.jpg</code></span>
+      <div class="hero-carousel" id="heroCarousel" role="region" aria-roledescription="carousel" aria-label="Completed project photos">
+        <div class="hc-track" id="hcTrack">
+          <div class="hc-slide"><img src="assets/img/Hero1.jpg" alt="Warehouse office fit-out with a slatted timber partition and lit display niches" loading="eager" fetchpriority="high" width="1448" height="1086"></div>
+          <div class="hc-slide"><img src="assets/img/Hero2.jpg" alt="HDB bedroom divided from a study nook by a glass-panel partition" width="1448" height="1086"></div>
+          <div class="hc-slide"><img src="assets/img/Hero3.jpg" alt="Condo living and dining area divided by a slatted feature partition" width="1448" height="1086"></div>
+          <div class="hc-slide"><img src="assets/img/Hero4.jpg" alt="Office corridor lined with glass partition meeting rooms" width="1448" height="1086"></div>
+          <div class="hc-slide"><img src="assets/img/hero5.jpg" alt="Empty commercial unit fitted out with new glass partition doors" width="1448" height="1086"></div>
+        </div>
+        <button class="hc-arrow hc-prev" type="button" aria-label="Previous photo">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M15.5 4.5 8 12l7.5 7.5 1.4-1.4L10.8 12l6.1-6.1z"/></svg>
+        </button>
+        <button class="hc-arrow hc-next" type="button" aria-label="Next photo">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8.5 4.5 16 12l-7.5 7.5-1.4-1.4L13.2 12 7.1 5.9z"/></svg>
+        </button>
+        <div class="hc-dots" role="tablist" aria-label="Choose photo">
+          <button class="hc-dot is-active" type="button" role="tab" aria-selected="true" aria-label="Photo 1 of 5" data-slide="0"></button>
+          <button class="hc-dot" type="button" role="tab" aria-selected="false" aria-label="Photo 2 of 5" data-slide="1"></button>
+          <button class="hc-dot" type="button" role="tab" aria-selected="false" aria-label="Photo 3 of 5" data-slide="2"></button>
+          <button class="hc-dot" type="button" role="tab" aria-selected="false" aria-label="Photo 4 of 5" data-slide="3"></button>
+          <button class="hc-dot" type="button" role="tab" aria-selected="false" aria-label="Photo 5 of 5" data-slide="4"></button>
+        </div>
       </div>
       <div class="hero-badge">
         <strong data-count="14">0</strong>
@@ -259,12 +278,8 @@
     <!-- Before / After -->
     <div class="ba reveal" id="beforeAfter">
       <div class="ba-frame" id="baFrame">
-        <div class="ba-img ba-after ph ph-after" role="img" aria-label="After: completed partition and paint work">
-          <span class="ph-note">AFTER photo<br><code>assets/img/after.jpg</code></span>
-        </div>
-        <div class="ba-img ba-before ph ph-before" id="baBefore" role="img" aria-label="Before: original room condition">
-          <span class="ph-note">BEFORE photo<br><code>assets/img/before.jpg</code></span>
-        </div>
+        <img class="ba-img ba-after" src="assets/img/after.jpg" alt="After: finished corridor with cove lighting, flooring and painted walls" loading="lazy" width="1400" height="1050">
+        <img class="ba-img ba-before" id="baBefore" src="assets/img/before.jpg" alt="Before: bare arched corridor shell mid-construction" loading="lazy" width="1400" height="1050">
         <div class="ba-handle" id="baHandle" aria-hidden="true"><span></span></div>
         <input class="ba-range" id="baRange" type="range" min="0" max="100" value="50" aria-label="Reveal before and after comparison">
         <span class="ba-label ba-label-l">Before</span>
@@ -281,14 +296,13 @@
     </div>
 
     <div class="gallery" id="gallery">
-      <figure class="shot reveal" data-cat="partition"><div class="ph" role="img" aria-label="Partition wall project"><span class="ph-note">assets/img/work-1.jpg</span></div><figcaption><strong>Study partition, 4-room HDB</strong><span>Punggol · Metal stud + acoustic infill</span></figcaption></figure>
-      <figure class="shot reveal" data-cat="painting"><div class="ph" role="img" aria-label="Painting project"><span class="ph-note">assets/img/work-2.jpg</span></div><figcaption><strong>Full-unit repaint</strong><span>Tampines · 5-room, 3 days</span></figcaption></figure>
-      <figure class="shot reveal" data-cat="ceiling"><div class="ph" role="img" aria-label="False ceiling project"><span class="ph-note">assets/img/work-3.jpg</span></div><figcaption><strong>L-box with cove lighting</strong><span>Condo, Bukit Timah</span></figcaption></figure>
-      <figure class="shot reveal" data-cat="partition"><div class="ph" role="img" aria-label="Office partition project"><span class="ph-note">assets/img/work-4.jpg</span></div><figcaption><strong>Office meeting rooms</strong><span>CBD · After-hours install</span></figcaption></figure>
-      <figure class="shot reveal" data-cat="painting"><div class="ph" role="img" aria-label="Feature wall project"><span class="ph-note">assets/img/work-5.jpg</span></div><figcaption><strong>Feature wall, deep green</strong><span>Condo, Novena</span></figcaption></figure>
-      <figure class="shot reveal" data-cat="ceiling"><div class="ph" role="img" aria-label="Ceiling box-up project"><span class="ph-note">assets/img/work-6.jpg</span></div><figcaption><strong>Aircon trunking box-up</strong><span>Sengkang · 2-day turnaround</span></figcaption></figure>
+      <figure class="shot reveal" data-cat="partition"><img class="shot-img" src="assets/img/acousticfill.jpg" alt="Partition wall framing mid-installation, acoustic infill visible" loading="lazy" width="1200" height="900"><figcaption><strong>Study partition, 4-room HDB</strong><span>Punggol · Metal stud + acoustic infill</span></figcaption></figure>
+      <figure class="shot reveal" data-cat="painting"><img class="shot-img" src="assets/img/tampinespaint.jpg" alt="Freshly painted, empty living space ready for handover" loading="lazy" width="1200" height="900"><figcaption><strong>Full-unit repaint</strong><span>Tampines · 5-room, 3 days</span></figcaption></figure>
+      <figure class="shot reveal" data-cat="ceiling"><img class="shot-img" src="assets/img/Lcovelight.jpg" alt="Hallway ceiling L-box with warm cove lighting" loading="lazy" width="1200" height="900"><figcaption><strong>L-box with cove lighting</strong><span>Condo, Bukit Timah</span></figcaption></figure>
+      <figure class="shot reveal" data-cat="partition"><img class="shot-img" src="assets/img/officemeetingroom.jpg" alt="Glass partition meeting rooms along an office corridor" loading="lazy" width="1200" height="900"><figcaption><strong>Office meeting rooms</strong><span>CBD · After-hours install</span></figcaption></figure>
+      <figure class="shot reveal" data-cat="painting"><img class="shot-img" src="assets/img/greenfeaturewall.jpg" alt="Deep green panelled feature wall in a living room" loading="lazy" width="1200" height="900"><figcaption><strong>Feature wall, deep green</strong><span>Condo, Novena</span></figcaption></figure>
+      <figure class="shot reveal" data-cat="ceiling"><img class="shot-img" src="assets/img/aircontrunking.jpg" alt="Ceiling box-up concealing aircon trunking" loading="lazy" width="1200" height="900"><figcaption><strong>Aircon trunking box-up</strong><span>Sengkang · 2-day turnaround</span></figcaption></figure>
     </div>
-    <p class="section-note reveal">Drop your own photos into <code>assets/img/</code> and swap the filenames in <code>index.html</code> — instructions are in the README.</p>
   </div>
 </section>
 

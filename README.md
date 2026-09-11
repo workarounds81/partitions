@@ -148,14 +148,14 @@ in `index.html` are already pointed at the new domain.
 
 ---
 
-## 7. Adding your own photos
+## 7. Photos
 
-The site currently uses grey placeholder blocks that say which file goes where.
-Full instructions: [`assets/img/README.md`](assets/img/README.md).
-
-Short version: drop your photos into `assets/img/`, then swap each placeholder
-`<div class="ph">` in `index.html` for a real `<img>` tag. Compress them first
-at [squoosh.app](https://squoosh.app) — aim for under 300 KB each.
+Real project photos are already wired in: a 5-slide hero carousel, a
+before/after slider, and a 6-shot filterable gallery. To swap or add more,
+see [`assets/img/README.md`](assets/img/README.md) — short version: replace
+the file at the same path, or point the `<img src>` at a new one and update
+the `alt` text. Compress first at [squoosh.app](https://squoosh.app) —
+aim under 250 KB each; a phone photo straight off the camera can be 4–8MB.
 
 ---
 
@@ -175,13 +175,13 @@ python3 -m http.server 8000
 
 | Section | What it does |
 |---|---|
-| Hero | The direct-to-tradesman pitch, WhatsApp and quote buttons |
-| Stats | Four animated counters — **edit these to real numbers** |
+| Hero | Direct-to-tradesman pitch + a 5-photo autoplay carousel (swipe on mobile, arrows/dots/keyboard on desktop) |
+| Stats | Four animated counters |
 | Services | Partitions, painting, ceilings, with detail lists |
 | Who we work with | Homeowners, commercial, trade |
 | How it works | Four-step process, drawings *or* site visit |
 | Why go direct | The honest case against paying markup on markup |
-| Our work | Draggable before/after slider + filterable gallery |
+| Our work | Draggable before/after slider + filterable gallery, all real photos |
 | Testimonials | **Placeholders — replace with real reviews only** |
 | Scope builder | Five-question wizard that writes the enquiry for the visitor |
 | FAQ | Eight accordion answers, including permits |
