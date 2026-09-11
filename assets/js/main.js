@@ -456,78 +456,73 @@
     $$('.shot-img').forEach(function (im) { wire(im, galleryItems); });
   }
 
-  /* ---------- Floorplan trace behind the hero ---------- */
+  /* ---------- Floorplan trace behind the page ---------- */
   function initFloorPlan() {
-    var cv = $('#heroPlan');
+    var cv = $('#sitePlan');
     var data = window.FLOORPLAN;
-    if (!cv || !data || !data.p || !data.p.length) return;
+    if (!cv || !data || !data.r || !data.r.length) return;
     var ctx = cv.getContext && cv.getContext('2d');
     if (!ctx) return;
 
-    var hero = cv.parentNode;
-    var pts = data.p, g = data.g, n = pts.length;
+    var runs = data.r, g = data.g, count = runs.length / 3;
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Points are painted once onto an offscreen canvas and only the new ones
-    // are added each frame; the visible canvas just blits it with a parallax
-    // offset. Keeps a 3,600-point trace to one drawImage per frame.
-    var off = document.createElement('canvas');
-    var octx = off.getContext('2d');
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-    var W = 0, H = 0, scale = 1, ox = 0, oy = 0, dot = 2;
-    var drawn = 0, progress = 0, holding = 0, phase = 'draw';
-    var mx = 0, my = 0, px = 0, py = 0, boost = 0;
-    var raf = null, last = 0, visible = false;
-
     var INK = '#0E1620', ACCENT = '#E8562A';
-    var DRAW_MS = 7000, HOLD_MS = 2600, ALPHA = 0.15;
+    var DRAW_MS = 5200, ALPHA = 0.2;
+
+    // The plan is painted once at source resolution onto an offscreen
+    // canvas, then scaled up per frame. Run-length rectangles butt against
+    // each other, so it reads as continuous line work, and scaling one
+    // bitmap is far cheaper than re-stroking 2,700 runs every frame.
+    var plan = document.createElement('canvas');
+    plan.width = g; plan.height = g;
+    var pctx = plan.getContext('2d');
+    pctx.fillStyle = INK;
+    for (var i = 0; i < count; i++) {
+      pctx.fillRect(runs[i * 3], runs[i * 3 + 1], runs[i * 3 + 2], 1);
+    }
+
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var W = 0, H = 0, size = 0, baseX = 0, baseY = 0;
+    var progress = 0, phase = 'draw';
+    var mx = 0, my = 0, ox = 0, oy = 0, boost = 0, scrollY = 0;
+    var raf = null, last = 0;
 
     function layout() {
-      var r = hero.getBoundingClientRect();
-      W = Math.max(1, Math.round(r.width));
-      H = Math.max(1, Math.round(r.height));
+      W = window.innerWidth; H = window.innerHeight;
       cv.width = W * dpr; cv.height = H * dpr;
       cv.style.width = W + 'px'; cv.style.height = H + 'px';
-      off.width = W * dpr; off.height = H * dpr;
-      octx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = true;
 
-      var size = Math.min(H * 1.2, W * 0.72);
-      scale = size / g;
-      ox = W * 0.63 - size / 2;
-      oy = H * 0.5 - size / 2;
-      dot = Math.max(1.5, scale * 0.85);
-      repaintTo(drawn);
+      // Sized to sit fully inside the viewport — the whole plan is readable
+      // rather than cropped at the edges.
+      var narrow = W < 900;
+      size = narrow ? Math.min(W * 0.8, H * 0.46) : Math.min(W * 0.38, H * 0.62);
+      size = Math.max(210, Math.min(size, 580));
+      baseX = (narrow ? W * 0.5 : W * 0.66) - size / 2;
+      baseY = H * 0.5 - size / 2;
     }
 
-    function plot(i) {
-      var v = pts[i];
-      octx.fillRect(ox + (v % g) * scale, oy + ((v / g) | 0) * scale, dot, dot);
-    }
-    function repaintTo(k) {
-      octx.clearRect(0, 0, W, H);
-      octx.fillStyle = INK;
-      for (var i = 0; i < k; i++) plot(i);
-      drawn = k;
-    }
-
-    function blit(tip) {
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.clearRect(0, 0, cv.width, cv.height);
+    function paint() {
+      var x = baseX + ox, y = baseY + oy - scrollY * 0.02;
+      ctx.clearRect(0, 0, W, H);
       ctx.globalAlpha = ALPHA;
-      ctx.drawImage(off, px * dpr, py * dpr);
-      if (tip > 0) {
-        // the "pen tip" — the most recent points, brighter, in the accent
-        ctx.globalAlpha = 0.55;
-        ctx.fillStyle = ACCENT;
-        for (var j = Math.max(0, tip - 80); j < tip; j++) {
-          var v = pts[j];
-          ctx.fillRect(
-            (ox + (v % g) * scale + px) * dpr,
-            (oy + ((v / g) | 0) * scale + py) * dpr,
-            dot * dpr, dot * dpr
-          );
-        }
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(x, y, size * progress, size);
+      ctx.clip();
+      ctx.drawImage(plan, x, y, size, size);
+      ctx.restore();
+
+      if (phase === 'draw' && progress > 0.01 && progress < 0.99) {
+        var edge = x + size * progress;
+        var grad = ctx.createLinearGradient(edge - 44, 0, edge, 0);
+        grad.addColorStop(0, 'rgba(232,86,42,0)');
+        grad.addColorStop(1, 'rgba(232,86,42,.5)');
+        ctx.globalAlpha = 0.34;
+        ctx.fillStyle = grad;
+        ctx.fillRect(edge - 44, y, 44, size);
       }
       ctx.globalAlpha = 1;
     }
@@ -539,67 +534,43 @@
 
       if (phase === 'draw') {
         progress += (dt * (1 + boost)) / DRAW_MS;
-        if (progress >= 1) { progress = 1; phase = 'hold'; holding = 0; }
-      } else {
-        holding += dt;
-        if (holding > HOLD_MS) { phase = 'draw'; progress = 0; repaintTo(0); }
+        if (progress >= 1) { progress = 1; phase = 'done'; }
       }
       boost *= 0.94;
 
-      var target = Math.round(progress * n);
-      if (target > drawn) {
-        octx.fillStyle = INK;
-        for (var i = drawn; i < target; i++) plot(i);
-        drawn = target;
-      }
-
-      px += (mx - px) * 0.06;
-      py += (my - py) * 0.06;
-      blit(phase === 'draw' ? target : 0);
-
+      ox += (mx - ox) * 0.06;
+      oy += (my - oy) * 0.06;
+      paint();
       raf = requestAnimationFrame(frame);
     }
 
-    function start() {
-      if (raf || reduce) return;
-      last = 0;
-      raf = requestAnimationFrame(frame);
-    }
-    function stop() {
-      if (raf) { cancelAnimationFrame(raf); raf = null; }
-    }
+    function start() { if (!raf && !reduce) { last = 0; raf = requestAnimationFrame(frame); } }
+    function stop() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
 
-    hero.addEventListener('mousemove', function (e) {
-      var r = hero.getBoundingClientRect();
-      mx = ((e.clientX - r.left) / r.width - 0.5) * -26;
-      my = ((e.clientY - r.top) / r.height - 0.5) * -18;
-      boost = Math.min(boost + 0.25, 1.6);
+    document.addEventListener('mousemove', function (e) {
+      mx = (e.clientX / window.innerWidth - 0.5) * -30;
+      my = (e.clientY / window.innerHeight - 0.5) * -20;
+      boost = Math.min(boost + 0.2, 1.4);
+    }, { passive: true });
+
+    window.addEventListener('scroll', function () {
+      scrollY = window.scrollY || document.documentElement.scrollTop;
+    }, { passive: true });
+
+    // Don't burn a rAF loop on a tab nobody is looking at.
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop(); else start();
     });
-    hero.addEventListener('mouseleave', function () { mx = 0; my = 0; });
 
     var resizeTimer = null;
     window.addEventListener('resize', function () {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(layout, 180);
+      resizeTimer = setTimeout(function () { layout(); paint(); }, 180);
     });
 
     layout();
-
-    if (reduce) {
-      // No animation — just show the finished plan.
-      repaintTo(n);
-      blit(0);
-      return;
-    }
-
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (entries) {
-        visible = entries[0].isIntersecting;
-        if (visible) start(); else stop();
-      }, { threshold: 0 }).observe(hero);
-    } else {
-      start();
-    }
+    if (reduce) { progress = 1; phase = 'done'; paint(); return; }
+    start();
   }
 
   /* ---------- Enquiry form ---------- */
