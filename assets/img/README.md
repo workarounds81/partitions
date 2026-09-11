@@ -40,3 +40,34 @@ Copy one `<figure class="shot reveal" data-cat="...">` block in `index.html`
 (under `#gallery`), point its `<img src>` at your new file, and set
 `data-cat` to `partition`, `painting`, or `ceiling` so it responds to the
 filter buttons.
+
+## The floorplan background
+
+The hero has a dotted "plotter drawing" trace of a unit floorplan running
+behind it. It does **not** load the floorplan image — that would be a 1MB
+PNG for a background texture. Instead the plan is reduced to a point cloud
+at build time and shipped as `assets/js/floorplan-data.js` (~9KB gzipped).
+
+To regenerate it from a different plan, drop the new image in and run:
+
+```bash
+python3 - <<'PY'
+from PIL import Image
+import json
+G, THRESH, TARGET = 220, 145, 3600
+im = Image.open('floorplan.png').convert('L').resize((G, G), Image.LANCZOS)
+px = im.load()
+pts = [(x, y) for y in range(G) for x in range(G) if px[x, y] < THRESH]
+if len(pts) > TARGET:
+    step = len(pts) / TARGET
+    pts = [pts[int(i * step)] for i in range(TARGET)]
+pts.sort(key=lambda p: (p[0], p[1]))          # left-to-right sweep
+packed = [y * G + x for x, y in pts]
+open('../js/floorplan-data.js', 'w').write(
+    f"window.FLOORPLAN={{g:{G},p:{json.dumps(packed, separators=(',', ':'))}}};\n")
+PY
+```
+
+Tune `THRESH` up to catch fainter lines, `TARGET` for more or fewer dots.
+The points are sorted by x so the animation sweeps left to right like a
+plotter. Rendering lives in `initFloorPlan()` in `assets/js/main.js`.

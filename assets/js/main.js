@@ -355,6 +355,253 @@
     show(0);
   }
 
+  /* ---------- Lightbox ---------- */
+  function initLightbox() {
+    var lb = $('#lightbox');
+    if (!lb) return;
+    var img = $('#lbImg'), cap = $('#lbCap'), count = $('#lbCount');
+    var closeBtn = $('#lbClose'), prevBtn = $('#lbPrev'), nextBtn = $('#lbNext');
+    var set = [], idx = 0, lastFocus = null;
+
+    function heroItems() {
+      return $$('.hc-slide img').map(function (im) {
+        return { src: im.currentSrc || im.src, alt: im.alt, title: '', sub: im.alt };
+      });
+    }
+    // Only the shots currently passing the filter, so prev/next doesn't
+    // wander through hidden cards.
+    function galleryItems() {
+      return $$('.shot').filter(function (f) { return !f.hidden; }).map(function (f) {
+        var im = $('.shot-img', f), t = $('figcaption strong', f), sub = $('figcaption span', f);
+        return {
+          src: im ? im.src : '', alt: im ? im.alt : '',
+          title: t ? t.textContent : '', sub: sub ? sub.textContent : ''
+        };
+      });
+    }
+
+    function render() {
+      var it = set[idx];
+      if (!it) return;
+      img.src = it.src;
+      img.alt = it.alt || '';
+      cap.textContent = '';
+      if (it.title) {
+        var st = document.createElement('strong');
+        st.textContent = it.title;
+        cap.appendChild(st);
+      }
+      if (it.sub) {
+        var sp = document.createElement('span');
+        sp.textContent = it.sub;
+        cap.appendChild(sp);
+      }
+      count.textContent = (idx + 1) + ' / ' + set.length;
+      var many = set.length > 1;
+      prevBtn.hidden = !many;
+      nextBtn.hidden = !many;
+      count.hidden = !many;
+    }
+
+    function open(items, i) {
+      if (!items.length) return;
+      set = items;
+      idx = Math.max(0, Math.min(i, items.length - 1));
+      lastFocus = document.activeElement;
+      lb.hidden = false;
+      lb.classList.add('is-open');
+      document.body.classList.add('lb-open');
+      render();
+      closeBtn.focus();
+    }
+    function close() {
+      lb.classList.remove('is-open');
+      lb.hidden = true;
+      document.body.classList.remove('lb-open');
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    function step(d) {
+      if (!set.length) return;
+      idx = (idx + d + set.length) % set.length;
+      render();
+    }
+
+    closeBtn.addEventListener('click', close);
+    prevBtn.addEventListener('click', function () { step(-1); });
+    nextBtn.addEventListener('click', function () { step(1); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) close(); });
+    document.addEventListener('keydown', function (e) {
+      if (lb.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') step(-1);
+      if (e.key === 'ArrowRight') step(1);
+    });
+
+    function wire(im, build) {
+      im.setAttribute('tabindex', '0');
+      function go() {
+        var items = build();
+        var i = 0;
+        for (var k = 0; k < items.length; k++) {
+          if (items[k].src === (im.currentSrc || im.src)) { i = k; break; }
+        }
+        open(items, i);
+      }
+      im.addEventListener('click', go);
+      im.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+      });
+    }
+    $$('.hc-slide img').forEach(function (im) { wire(im, heroItems); });
+    $$('.shot-img').forEach(function (im) { wire(im, galleryItems); });
+  }
+
+  /* ---------- Floorplan trace behind the hero ---------- */
+  function initFloorPlan() {
+    var cv = $('#heroPlan');
+    var data = window.FLOORPLAN;
+    if (!cv || !data || !data.p || !data.p.length) return;
+    var ctx = cv.getContext && cv.getContext('2d');
+    if (!ctx) return;
+
+    var hero = cv.parentNode;
+    var pts = data.p, g = data.g, n = pts.length;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Points are painted once onto an offscreen canvas and only the new ones
+    // are added each frame; the visible canvas just blits it with a parallax
+    // offset. Keeps a 3,600-point trace to one drawImage per frame.
+    var off = document.createElement('canvas');
+    var octx = off.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    var W = 0, H = 0, scale = 1, ox = 0, oy = 0, dot = 2;
+    var drawn = 0, progress = 0, holding = 0, phase = 'draw';
+    var mx = 0, my = 0, px = 0, py = 0, boost = 0;
+    var raf = null, last = 0, visible = false;
+
+    var INK = '#0E1620', ACCENT = '#E8562A';
+    var DRAW_MS = 7000, HOLD_MS = 2600, ALPHA = 0.15;
+
+    function layout() {
+      var r = hero.getBoundingClientRect();
+      W = Math.max(1, Math.round(r.width));
+      H = Math.max(1, Math.round(r.height));
+      cv.width = W * dpr; cv.height = H * dpr;
+      cv.style.width = W + 'px'; cv.style.height = H + 'px';
+      off.width = W * dpr; off.height = H * dpr;
+      octx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      var size = Math.min(H * 1.2, W * 0.72);
+      scale = size / g;
+      ox = W * 0.63 - size / 2;
+      oy = H * 0.5 - size / 2;
+      dot = Math.max(1.5, scale * 0.85);
+      repaintTo(drawn);
+    }
+
+    function plot(i) {
+      var v = pts[i];
+      octx.fillRect(ox + (v % g) * scale, oy + ((v / g) | 0) * scale, dot, dot);
+    }
+    function repaintTo(k) {
+      octx.clearRect(0, 0, W, H);
+      octx.fillStyle = INK;
+      for (var i = 0; i < k; i++) plot(i);
+      drawn = k;
+    }
+
+    function blit(tip) {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      ctx.globalAlpha = ALPHA;
+      ctx.drawImage(off, px * dpr, py * dpr);
+      if (tip > 0) {
+        // the "pen tip" — the most recent points, brighter, in the accent
+        ctx.globalAlpha = 0.55;
+        ctx.fillStyle = ACCENT;
+        for (var j = Math.max(0, tip - 80); j < tip; j++) {
+          var v = pts[j];
+          ctx.fillRect(
+            (ox + (v % g) * scale + px) * dpr,
+            (oy + ((v / g) | 0) * scale + py) * dpr,
+            dot * dpr, dot * dpr
+          );
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function frame(t) {
+      if (!last) last = t;
+      var dt = Math.min(t - last, 50);
+      last = t;
+
+      if (phase === 'draw') {
+        progress += (dt * (1 + boost)) / DRAW_MS;
+        if (progress >= 1) { progress = 1; phase = 'hold'; holding = 0; }
+      } else {
+        holding += dt;
+        if (holding > HOLD_MS) { phase = 'draw'; progress = 0; repaintTo(0); }
+      }
+      boost *= 0.94;
+
+      var target = Math.round(progress * n);
+      if (target > drawn) {
+        octx.fillStyle = INK;
+        for (var i = drawn; i < target; i++) plot(i);
+        drawn = target;
+      }
+
+      px += (mx - px) * 0.06;
+      py += (my - py) * 0.06;
+      blit(phase === 'draw' ? target : 0);
+
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      if (raf || reduce) return;
+      last = 0;
+      raf = requestAnimationFrame(frame);
+    }
+    function stop() {
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+    }
+
+    hero.addEventListener('mousemove', function (e) {
+      var r = hero.getBoundingClientRect();
+      mx = ((e.clientX - r.left) / r.width - 0.5) * -26;
+      my = ((e.clientY - r.top) / r.height - 0.5) * -18;
+      boost = Math.min(boost + 0.25, 1.6);
+    });
+    hero.addEventListener('mouseleave', function () { mx = 0; my = 0; });
+
+    var resizeTimer = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(layout, 180);
+    });
+
+    layout();
+
+    if (reduce) {
+      // No animation — just show the finished plan.
+      repaintTo(n);
+      blit(0);
+      return;
+    }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+        if (visible) start(); else stop();
+      }, { threshold: 0 }).observe(hero);
+    } else {
+      start();
+    }
+  }
+
   /* ---------- Enquiry form ---------- */
   function initForm() {
     var form = $('#enquiryForm');
@@ -448,6 +695,8 @@
     initFilters();
     initFaq();
     initBuilder();
+    initLightbox();
+    initFloorPlan();
     initForm();
   }
 
