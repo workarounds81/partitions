@@ -137,7 +137,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
     radial-gradient(700px 500px at 4% 12%,rgba(27,39,53,.07),transparent 60%),
     var(--paper);
 }
-.hero-inner{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(32px,5vw,72px);align-items:center;padding-bottom:clamp(56px,7vw,90px)}
+.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1.14fr;gap:clamp(28px,4vw,56px);align-items:center;padding-bottom:clamp(56px,7vw,90px)}
 .hero-copy h1{margin-bottom:.42em}
 .lede{font-size:clamp(1.04rem,1.45vw,1.19rem);color:var(--muted);max-width:37em;margin-bottom:2em}
 .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:30px}
@@ -180,7 +180,16 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 }
 .hc-track{display:flex;height:100%;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
 .hc-slide{flex:0 0 100%;height:100%}
-.hc-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.hc-slide img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+
+/* Floorplan trace behind the hero. Masked so it fades out under the
+   headline — texture on the right, clear reading on the left. */
+.hero-plan{
+  position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.18) 26%,rgba(0,0,0,.7) 52%,#000 72%);
+  mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.18) 26%,rgba(0,0,0,.7) 52%,#000 72%);
+}
+.marquee{position:relative;z-index:1}
 .hc-arrow{
   position:absolute;top:50%;transform:translateY(-50%);z-index:2;
   width:38px;height:38px;border-radius:50%;border:0;padding:0;cursor:pointer;
@@ -190,6 +199,10 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 .hc-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.08)}
 .hc-prev{left:12px}
 .hc-next{right:12px}
+.hero-carousel::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:76px;z-index:1;pointer-events:none;
+  background:linear-gradient(transparent,rgba(8,14,22,.38));
+}
 .hc-dots{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:2;display:flex;gap:7px}
 .hc-dot{width:8px;height:8px;border-radius:99px;border:0;padding:0;cursor:pointer;background:rgba(255,255,255,.55);transition:all .2s ease}
 .hc-dot:hover{background:rgba(255,255,255,.85)}
@@ -202,7 +215,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 
 /* ---------- Real photos (before/after + gallery) ---------- */
 .ba-img{object-fit:cover}
-.shot-img{border-radius:var(--radius);aspect-ratio:4/3;object-fit:cover;width:100%;display:block;transition:transform .4s ease}
+.shot-img{border-radius:var(--radius);aspect-ratio:4/3;object-fit:cover;width:100%;height:auto;display:block;cursor:zoom-in;transition:transform .4s ease}
 .shot:hover .shot-img{transform:scale(1.02)}
 
 /* Marquee */
@@ -280,7 +293,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 }
 .filter:hover{border-color:var(--ink);color:var(--ink)}
 .filter.is-active{background:var(--ink);border-color:var(--ink);color:#fff}
-.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1020px;margin-inline:auto}
 .shot{margin:0;transition:opacity .3s ease,transform .3s ease}
 .shot[hidden]{display:none}
 .shot .ph{transition:transform .4s ease}
@@ -426,8 +439,17 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 .reveal.is-visible{opacity:1;transform:none}
 
 /* ---------- Responsive ---------- */
+@media (min-width:1001px){
+  .hero-inner{grid-template-columns:1fr 1.15fr}
+  /* Reach the carousel out past the container toward the viewport edge.
+     Applied to the card, not the container — .wrap uses margin-inline:auto,
+     so overriding just margin-right there lets margin-left:auto eat the
+     slack and shunt the whole hero sideways. .hero clips any overhang. */
+  .hero-card{margin-right:calc(-1 * clamp(0px, (100vw - var(--wrap)) / 2 - 26px, 200px))}
+}
 @media (max-width:1000px){
   .hero-inner{grid-template-columns:1fr;gap:40px}
+  .hero-card{margin-right:0}
   .hero-card{max-width:560px}
   .cards-3,.cards-4,.gallery{grid-template-columns:repeat(2,1fr)}
   .steps{grid-template-columns:repeat(2,1fr)}
@@ -488,4 +510,44 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 @media (max-width:380px){
   .brand{font-size:.94rem}
   .brand-mark svg{width:24px;height:24px}
+}
+
+/* ---------- Lightbox ---------- */
+body.lb-open{overflow:hidden}
+.lb{
+  position:fixed;inset:0;z-index:200;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(8,13,20,.94);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+}
+.lb.is-open{display:flex}
+.lb-fig{margin:0;display:flex;flex-direction:column;align-items:center;gap:14px;max-width:min(1120px,94vw)}
+.lb-img{
+  max-width:100%;max-height:78vh;width:auto;height:auto;object-fit:contain;
+  border-radius:10px;box-shadow:0 30px 90px -20px rgba(0,0,0,.85);background:#121a24;
+}
+.lb-cap{display:flex;flex-direction:column;gap:3px;text-align:center;color:#A9B6C6;font-size:.9rem}
+.lb-cap strong{color:#fff;font-size:1.02rem;font-weight:700;letter-spacing:-.015em}
+.lb-btn{
+  position:absolute;border:0;padding:0;cursor:pointer;color:#fff;
+  background:rgba(255,255,255,.12);border-radius:50%;
+  display:grid;place-items:center;transition:background .18s ease,transform .18s ease;
+}
+.lb-btn:hover{background:rgba(255,255,255,.24)}
+.lb-close{top:18px;right:18px;width:46px;height:46px}
+.lb-nav{top:50%;transform:translateY(-50%);width:50px;height:50px}
+.lb-nav:hover{transform:translateY(-50%) scale(1.08)}
+.lb-prev{left:18px}
+.lb-next{right:18px}
+.lb-count{
+  position:absolute;bottom:18px;left:50%;transform:translateX(-50%);margin:0;
+  color:#8A97A7;font-size:.82rem;font-weight:700;letter-spacing:.12em;
+}
+@media (max-width:640px){
+  .lb{padding:12px}
+  .lb-img{max-height:70vh}
+  .lb-nav{width:42px;height:42px}
+  .lb-prev{left:8px}
+  .lb-next{right:8px}
+  .lb-close{top:10px;right:10px;width:42px;height:42px}
 }
