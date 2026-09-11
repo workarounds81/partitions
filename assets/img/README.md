@@ -41,39 +41,51 @@ Copy one `<figure class="shot reveal" data-cat="...">` block in `index.html`
 `data-cat` to `partition`, `painting`, or `ceiling` so it responds to the
 filter buttons.
 
-## The floorplan background
+## The animated backdrop
 
-A line drawing of a unit floorplan sits fixed behind the whole page and
-draws itself in once on load, left to right. It does **not** load the
-floorplan image - that would be a 1MB PNG for a background. The plan is
-run-length encoded at build time into `assets/js/floorplan-data.js`
-(~7KB gzipped) as solid runs, which render as continuous line work.
+`background.webp` is the partition timelapse (`assets/background.gif` on the
+upload branch) reduced to black and orange pixel dots. It sits fixed behind
+the whole page, masked so its density stays out in the right margin.
 
-To regenerate it from a different plan, run this from `assets/img/`:
+The source GIF is 6.9MB - far too heavy to ship. The dotted version is 64KB,
+a 99% saving, because two flat colours on transparency compress extremely
+well. Browsers without animated WebP still show a static first frame, which
+reads fine.
+
+To regenerate from a new clip, run this from `assets/img/` with the source
+GIF alongside it:
 
 ```python
-from PIL import Image
-import json
-G, THRESH = 420, 150
-im = Image.open('floorplan.png').convert('L').resize((G, G), Image.LANCZOS)
-px = im.load()
-runs = []
-for y in range(G):
-    x = 0
-    while x < G:
-        if px[x, y] < THRESH:
-            start = x
-            while x < G and px[x, y] < THRESH:
-                x += 1
-            runs.append((start, y, x - start))
-        else:
-            x += 1
-runs.sort(key=lambda r: (r[0], r[1]))      # left-to-right sweep
-flat = [v for r in runs for v in r]
-open('../js/floorplan-data.js', 'w').write(
-    'window.FLOORPLAN={g:%d,r:%s};\n' % (G, json.dumps(flat, separators=(',', ':'))))
+from PIL import Image, ImageDraw, ImageOps
+INK, ACC, BG = (14,22,32), (232,86,42), (255,255,255)
+GW, GH, CELL = 40, 71, 8          # dot grid, and pixels per dot
+T_SKIP, T_INK = 0.56, 0.72        # skip below, ink above, orange between
+STEP = 2                          # take every Nth source frame
+src = Image.open('background.gif')
+
+def dotify(frame):
+    g = ImageOps.autocontrast(frame.convert('L').resize((GW, GH), Image.LANCZOS), cutoff=2)
+    px = g.load()
+    out = Image.new('RGBA', (GW*CELL, GH*CELL), (0,0,0,0))
+    d = ImageDraw.Draw(out)
+    for y in range(GH):
+        for x in range(GW):
+            dark = 1 - px[x, y]/255
+            if dark <= T_SKIP: continue
+            ink = dark > T_INK
+            r = CELL-2 if ink else CELL-3
+            ox, oy = x*CELL + (CELL-r)//2, y*CELL + (CELL-r)//2
+            d.rectangle([ox, oy, ox+r-1, oy+r-1], fill=(INK if ink else ACC)+(255,))
+    return out
+
+frames = []
+for i in range(0, src.n_frames, STEP):
+    src.seek(i)
+    frames.append(dotify(src.convert('RGB')))
+frames[0].save('background.webp', save_all=True, append_images=frames[1:],
+               loop=0, duration=200, lossless=True, method=6)
 ```
 
-Raise `THRESH` to catch fainter lines, `G` for more detail at a larger
-payload. Rendering lives in `initFloorPlan()` in `assets/js/main.js` -
-size, position and opacity (`ALPHA`) are the knobs worth touching.
+Lower `T_SKIP` for a denser image, raise it to thin it out. `CELL` controls
+how chunky the pixels look. Size, position and opacity are the `.site-bg`
+rules in `assets/css/style.css`.
