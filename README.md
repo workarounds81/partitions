@@ -14,9 +14,9 @@ Everything personal lives in **one file**: [`assets/js/config.js`](assets/js/con
 ```js
 window.SITE = {
   name: "partitionwork.com",
-  whatsapp: "6580000000",           // country code + number, digits only
-  whatsappDisplay: "+65 8000 0000",
-  email: "hello@partitionwork.com",
+  whatsapp: "6598575090",           // country code + number, digits only
+  whatsappDisplay: "+65 9857 5090",
+  email: "info@partitionwork.com",
   formspreeId: "XXXXXXX",           // from your Formspree endpoint
   uen: "",                          // leave empty to hide it
 };
