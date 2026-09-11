@@ -1,4 +1,4 @@
-# partition.work
+# partitionwork.com
 
 A fast, static marketing site for a Singapore partition, painting and false-ceiling
 business. No frameworks, no build step, no monthly bill — plain HTML, CSS and
@@ -13,10 +13,10 @@ Everything personal lives in **one file**: [`assets/js/config.js`](assets/js/con
 
 ```js
 window.SITE = {
-  name: "partition.work",
+  name: "partitionwork.com",
   whatsapp: "6580000000",           // country code + number, digits only
   whatsappDisplay: "+65 8000 0000",
-  email: "hello@partition.work",
+  email: "hello@partitionwork.com",
   formspreeId: "XXXXXXX",           // from your Formspree endpoint
   uen: "",                          // leave empty to hide it
 };
@@ -125,17 +125,12 @@ merging — that's where most of your visitors will be.
 
 ## 6. Custom domain (optional — about S$40/year)
 
-`partition.work` is a `.work` domain: available at most registrars
-(Namecheap, Porkbun, Cloudflare) for roughly S$30–50/year. GitHub Pages hosting
-stays free — you're only paying for the name.
+`partitionwork.com` is bought and the `CNAME` file is already in the repo root.
+GitHub Pages hosting stays free — you only pay for the name.
 
-Once you own it:
+To finish hooking it up:
 
-1. Create a file called `CNAME` in the repo root containing one line:
-   ```
-   partition.work
-   ```
-2. At your registrar's DNS settings, add:
+1. At your registrar's DNS settings, add:
 
    | Type | Name | Value |
    |---|---|---|
@@ -145,11 +140,11 @@ Once you own it:
    | A | `@` | `185.199.111.153` |
    | CNAME | `www` | `<your-username>.github.io` |
 
-3. **Settings → Pages → Custom domain** → enter `partition.work` → **Save**,
+2. **Settings → Pages → Custom domain** → enter `partitionwork.com` → **Save**,
    then tick **Enforce HTTPS** once the certificate is issued (up to 24 hours).
 
-Also update `domain` in `config.js`, plus `robots.txt`, `sitemap.xml` and the
-`<link rel="canonical">` in `index.html`.
+`config.js`, `robots.txt`, `sitemap.xml`, the `CNAME` file and the canonical tag
+in `index.html` are already pointed at the new domain.
 
 ---
 
