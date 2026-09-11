@@ -220,3 +220,21 @@ assets/img/              Your photos
 robots.txt, sitemap.xml  Search engines
 .nojekyll                Tells GitHub Pages to serve files as-is
 ```
+
+---
+
+## Turning on the custom domain
+
+The `CNAME` file is deliberately **not** in the repo yet. GitHub Pages
+301-redirects the `github.io` URL to whatever is in `CNAME`, so committing it
+before DNS resolves makes the site look dead.
+
+Order of operations:
+
+1. Enable Pages (`gh-pages` branch) and confirm the site loads at
+   `https://workarounds81.github.io/partitions/`.
+2. Add the DNS records at your registrar (see the custom domain section above).
+3. Wait until `partitionwork.com` resolves — check at `dnschecker.org`.
+4. **Settings → Pages → Custom domain** → type `partitionwork.com` → **Save**.
+   GitHub creates the `CNAME` file for you on the `gh-pages` branch.
+5. Tick **Enforce HTTPS** once the certificate is issued (can take a few hours).
