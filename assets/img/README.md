@@ -47,8 +47,8 @@ filter buttons.
 upload branch) reduced to black and orange pixel dots. It sits fixed behind
 the whole page, masked so its density stays out in the right margin.
 
-The source GIF is 6.9MB - far too heavy to ship. The dotted version is 64KB,
-a 99% saving, because two flat colours on transparency compress extremely
+The source GIF is 6.9MB - far too heavy to ship. The dotted version is 124KB,
+a 98% saving, because two flat colours on transparency compress extremely
 well. Browsers without animated WebP still show a static first frame, which
 reads fine.
 
@@ -58,9 +58,9 @@ GIF alongside it:
 ```python
 from PIL import Image, ImageDraw, ImageOps
 INK, ACC, BG = (14,22,32), (232,86,42), (255,255,255)
-GW, GH, CELL = 40, 71, 8          # dot grid, and pixels per dot
-T_SKIP, T_INK = 0.56, 0.72        # skip below, ink above, orange between
-STEP = 2                          # take every Nth source frame
+GW, GH, CELL = 120, 213, 3        # dot grid, and pixels per dot
+T_SKIP, T_INK = 0.50, 0.68        # skip below, ink above, orange between
+STEP = 3                          # take every Nth source frame
 src = Image.open('background.gif')
 
 def dotify(frame):
@@ -73,7 +73,7 @@ def dotify(frame):
             dark = 1 - px[x, y]/255
             if dark <= T_SKIP: continue
             ink = dark > T_INK
-            r = CELL-2 if ink else CELL-3
+            r = max(1, CELL-1)
             ox, oy = x*CELL + (CELL-r)//2, y*CELL + (CELL-r)//2
             d.rectangle([ox, oy, ox+r-1, oy+r-1], fill=(INK if ink else ACC)+(255,))
     return out
@@ -83,9 +83,20 @@ for i in range(0, src.n_frames, STEP):
     src.seek(i)
     frames.append(dotify(src.convert('RGB')))
 frames[0].save('background.webp', save_all=True, append_images=frames[1:],
-               loop=0, duration=200, lossless=True, method=6)
+               loop=0, duration=300, lossless=True, method=6)
 ```
 
 Lower `T_SKIP` for a denser image, raise it to thin it out. `CELL` controls
 how chunky the pixels look. Size, position and opacity are the `.site-bg`
 rules in `assets/css/style.css`.
+
+Keep `lossless=True`. Lossy WebP on flat two-colour art with transparency
+is dramatically *worse* — the same clip came out at 2MB versus 124KB.
+
+## Cache busting
+
+`index.html` loads the CSS and JS with a `?v=N` query string. GitHub Pages
+lets browsers hold assets well past a deploy, so without it a fresh
+`index.html` can render against a stale stylesheet — which looks like the
+site has exploded. **Bump that number whenever you edit `style.css`,
+`main.js` or `config.js`.**

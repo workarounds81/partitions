@@ -5,6 +5,7 @@
 window.SITE = {
   // ---- Business identity ----
   name: "partitionwork.com",
+  company: "Flipwire Design Pte Ltd",   // registered entity, shown in the footer
   tagline: "Partition & painting specialists — Singapore",
   domain: "partitionwork.com",         // used for sitemap/SEO, no https://
 
