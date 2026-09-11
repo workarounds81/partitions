@@ -173,10 +173,24 @@
     prevBtn.addEventListener('click', function () { prev(); play(); });
     dots.forEach(function (d, di) { d.addEventListener('click', function () { show(di); play(); }); });
 
-    root.addEventListener('mouseenter', stop);
-    root.addEventListener('mouseleave', play);
-    root.addEventListener('focusin', stop);
-    root.addEventListener('focusout', play);
+    // Pause on hover, but only where hovering is a real thing. Touch
+    // browsers fire an emulated mouseenter on tap and never a matching
+    // mouseleave, so binding these on a phone stops autoplay on first tap
+    // and it never comes back.
+    var canHover = !window.matchMedia || window.matchMedia('(hover: hover)').matches;
+    if (canHover) {
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', play);
+    }
+    // Pause on focus only for the carousel's own controls. Focus landing on
+    // a slide photo must not pause: a tap focuses it, and closing the
+    // lightbox restores focus to it, which would otherwise leave autoplay
+    // dead while the visitor is still looking at the carousel.
+    function isControl(el) {
+      return !!(el && el.closest && el.closest('.hc-arrow, .hc-dot'));
+    }
+    root.addEventListener('focusin', function (e) { if (isControl(e.target)) stop(); });
+    root.addEventListener('focusout', function (e) { if (isControl(e.target)) play(); });
     root.addEventListener('keydown', function (e) {
       if (e.key === 'ArrowLeft') { prev(); play(); }
       if (e.key === 'ArrowRight') { next(); play(); }
