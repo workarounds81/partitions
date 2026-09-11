@@ -1,0 +1,120 @@
+# ============================================================
+#  Deploys the site to GitHub Pages — free, no third-party actions.
+#
+#  main branch  ->  https://<user>.github.io/<repo>/          (live site)
+#  pull request ->  https://<user>.github.io/<repo>/pr-<n>/   (preview)
+#
+#  One-time setup: Settings -> Pages -> Source: "Deploy from a branch",
+#  Branch: gh-pages, Folder: / (root).
+# ============================================================
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
+
+concurrency:
+  group: pages-${{ github.event.pull_request.number || 'main' }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+        with:
+          path: src
+
+      - name: Check out (or create) the gh-pages branch
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch gh-pages \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" pages \
+            || {
+              echo "gh-pages does not exist yet — creating it."
+              git clone --depth 1 \
+                "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" pages
+              cd pages
+              git checkout --orphan gh-pages
+              git rm -rf . >/dev/null 2>&1 || true
+              touch .nojekyll
+              git add -A
+            }
+
+      - name: Work out where this build goes
+        id: target
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "dir=pr-${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "dir=." >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Remove the preview folder (PR closed)
+        if: github.event_name == 'pull_request' && github.event.action == 'closed'
+        working-directory: pages
+        run: rm -rf "${{ steps.target.outputs.dir }}"
+
+      - name: Copy the site into place
+        if: github.event.action != 'closed'
+        run: |
+          set -euo pipefail
+          DEST="pages/${{ steps.target.outputs.dir }}"
+          mkdir -p "$DEST"
+          if [ "${{ steps.target.outputs.dir }}" = "." ]; then
+            # Clear the live site but keep .git and any open PR previews
+            find pages -mindepth 1 -maxdepth 1 \
+              ! -name '.git' ! -name 'pr-*' -exec rm -rf {} +
+          else
+            find "$DEST" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+          fi
+          rsync -a --delete-excluded \
+            --exclude '.git' --exclude '.github' --exclude 'node_modules' \
+            src/ "$DEST"/
+          touch pages/.nojekyll
+
+      - name: Commit and push
+        working-directory: pages
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "Nothing changed — skipping push."
+            exit 0
+          fi
+          git commit -m "Deploy ${{ steps.target.outputs.dir }} from ${{ github.sha }}"
+          for attempt in 1 2 3 4; do
+            git push origin gh-pages && break
+            echo "Push failed (attempt $attempt) — retrying."
+            sleep $((2 ** attempt))
+            git pull --rebase origin gh-pages || true
+          done
+
+      - name: Leave the preview link on the PR
+        if: github.event_name == 'pull_request' && github.event.action != 'closed'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const n = context.payload.pull_request.number;
+            const url = `https://${owner}.github.io/${repo}/pr-${n}/`;
+            const marker = '<!-- preview-link -->';
+            const body = `${marker}\n### Preview ready\n\n${url}\n\nUpdated for commit \`${context.sha.slice(0, 7)}\`. It may take a minute for GitHub Pages to refresh.`;
+            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: n });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number: n, body });
+            }
