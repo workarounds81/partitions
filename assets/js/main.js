@@ -40,7 +40,6 @@
     }
     var yr = $('#year');
     if (yr) yr.textContent = new Date().getFullYear();
-    if (CFG.name) document.title = CFG.name + ' — Partition Walls, Painting & Ceiling Specialists in Singapore';
   }
 
   /* ---------- Header state + scroll progress ---------- */
@@ -167,7 +166,7 @@
     function next() { show(i + 1); }
     function prev() { show(i - 1); }
     function stop() { if (timer) { clearInterval(timer); timer = null; } }
-    function play() { if (reduce) return; stop(); timer = setInterval(next, 5000); }
+    function play() { stop(); timer = setInterval(next, reduce ? 7000 : 5000); }
 
     nextBtn.addEventListener('click', function () { next(); play(); });
     prevBtn.addEventListener('click', function () { prev(); play(); });
@@ -207,6 +206,22 @@
       touchX = null;
       play();
     }, { passive: true });
+
+    // Slides 2-5 ship as loading="lazy" so they don't compete with the LCP
+    // image for bandwidth on first paint. Warm them once the page is loaded,
+    // well before anyone can click through to them — the carousel never shows
+    // a blank frame, but first load is ~500KB lighter.
+    function warmSlides() {
+      slides.forEach(function (sl) {
+        var im = $('img', sl);
+        if (im && im.loading === 'lazy') im.loading = 'eager';
+      });
+    }
+    if (document.readyState === 'complete') {
+      setTimeout(warmSlides, 300);
+    } else {
+      window.addEventListener('load', function () { setTimeout(warmSlides, 300); });
+    }
 
     show(0);
     play();
