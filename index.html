@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=8">
+<link rel="stylesheet" href="assets/css/style.css?v=9">
 </head>
 <body>
 
@@ -42,7 +42,7 @@
       <a href="#work">Our work</a>
       <a href="#estimator">Scope builder</a>
       <a href="#faq">FAQ</a>
-      <a href="#contact" class="nav-cta">Get a quote</a>
+      <a href="#contact" class="nav-cta" data-wa-link>WhatsApp Quote</a>
     </nav>
 
     <a class="btn btn-wa header-wa" data-wa-link href="#contact">
@@ -65,18 +65,36 @@
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="wrap hero-inner">
     <div class="hero-copy">
-      <p class="eyebrow reveal">Singapore · HDB · Condo · Office</p>
-      <h1 class="reveal">Partition walls and painting,<br><span class="hl">without the middleman markup.</span></h1>
-      <p class="lede reveal">Sick of your interior designer charging you an arm and a leg for a stud wall and two coats of paint? We're the crew that actually does the work. Simple or complex — send us your drawings, or let us quote on site.</p>
+      <p class="hero-id reveal">
+        <strong>Partition Works</strong>
+        <span>Partition &middot; False Ceiling &middot; Painting</span>
+        <span>Residential &middot; Commercial &middot; Industrial</span>
+        <span class="hero-id-loc">Singapore</span>
+      </p>
+      <h1 class="reveal">Skip the interior designer markup<br><span class="hl">on your partition &amp; paint job.</span></h1>
+      <p class="lede reveal">We're the crew that actually does the work — simple or complex, HDB to industrial units, island-wide.</p>
+
+      <p class="hero-cta-line reveal">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.1c-.25.69-1.45 1.32-2 1.4-.51.08-1.16.11-1.87-.12-.43-.14-.98-.32-1.69-.62-2.98-1.29-4.92-4.28-5.07-4.48-.15-.2-1.21-1.61-1.21-3.07s.77-2.18 1.04-2.48c.27-.3.59-.37.79-.37.2 0 .39 0 .57.01.18.01.43-.07.67.51.25.6.84 2.06.91 2.21.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.44.52-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.65-.07.17-.2.75-.87.95-1.17.2-.3.4-.25.67-.15.27.1 1.72.81 2.02.96.3.15.5.22.57.35.07.12.07.72-.18 1.41Z"/></svg>
+        <span>Send us your photos, measurements or drawings on <strong>WhatsApp</strong> for an initial quotation.</span>
+      </p>
+
       <div class="hero-actions reveal">
-        <a class="btn btn-primary btn-lg" data-wa-link href="#contact">Message us on WhatsApp</a>
-        <a class="btn btn-ghost btn-lg" href="#contact">Request a free quote</a>
+        <a class="btn btn-wa btn-xl" data-wa-link href="#contact">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.1c-.25.69-1.45 1.32-2 1.4-.51.08-1.16.11-1.87-.12-.43-.14-.98-.32-1.69-.62-2.98-1.29-4.92-4.28-5.07-4.48-.15-.2-1.21-1.61-1.21-3.07s.77-2.18 1.04-2.48c.27-.3.59-.37.79-.37.2 0 .39 0 .57.01.18.01.43-.07.67.51.25.6.84 2.06.91 2.21.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.44.52-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.65-.07.17-.2.75-.87.95-1.17.2-.3.4-.25.67-.15.27.1 1.72.81 2.02.96.3.15.5.22.57.35.07.12.07.72-.18 1.41Z"/></svg>
+          Get a WhatsApp Quote
+        </a>
+        <a class="btn btn-ghost btn-lg" href="#contact">Or request a quote by form</a>
       </div>
-      <ul class="hero-points reveal">
-        <li>Free, no-obligation quotes</li>
-        <li>Own crew — no subcontractor chain</li>
-        <li>Fixed price before we start</li>
-      </ul>
+
+      <div class="hero-send reveal">
+        <span class="hero-send-label">For a faster estimate, send:</span>
+        <span class="hero-send-item">Photo/video of area</span>
+        <span class="hero-send-item">Dimensions</span>
+        <span class="hero-send-item">Location/postcode</span>
+        <span class="hero-send-item">Work needed</span>
+        <span class="hero-send-item">Preferred date</span>
+      </div>
     </div>
 
     <div class="hero-card reveal">
@@ -498,8 +516,18 @@
       </ul>
 
       <div class="wa-cta">
-        <a class="btn btn-wa btn-lg" data-wa-link href="#">Open WhatsApp chat</a>
-        <p class="tiny">Have drawings, plans or photos? WhatsApp is the easiest way to send them over.</p>
+        <a class="btn btn-wa btn-xl btn-block" data-wa-link href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.1c-.25.69-1.45 1.32-2 1.4-.51.08-1.16.11-1.87-.12-.43-.14-.98-.32-1.69-.62-2.98-1.29-4.92-4.28-5.07-4.48-.15-.2-1.21-1.61-1.21-3.07s.77-2.18 1.04-2.48c.27-.3.59-.37.79-.37.2 0 .39 0 .57.01.18.01.43-.07.67.51.25.6.84 2.06.91 2.21.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.44.52-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.65-.07.17-.2.75-.87.95-1.17.2-.3.4-.25.67-.15.27.1 1.72.81 2.02.96.3.15.5.22.57.35.07.12.07.72-.18 1.41Z"/></svg>
+          Get a WhatsApp Quote
+        </a>
+        <p class="wa-cta-note">For a faster estimate, send us:</p>
+        <ul class="wa-cta-list">
+          <li>Photo/video of the area</li>
+          <li>Approximate dimensions</li>
+          <li>Location/postcode</li>
+          <li>Desired work</li>
+          <li>Preferred completion date</li>
+        </ul>
       </div>
     </div>
 
@@ -629,10 +657,10 @@
 <!-- Floating WhatsApp -->
 <a class="fab" data-wa-link href="#" aria-label="Chat with us on WhatsApp">
   <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.1c-.25.69-1.45 1.32-2 1.4-.51.08-1.16.11-1.87-.12-.43-.14-.98-.32-1.69-.62-2.98-1.29-4.92-4.28-5.07-4.48-.15-.2-1.21-1.61-1.21-3.07s.77-2.18 1.04-2.48c.27-.3.59-.37.79-.37.2 0 .39 0 .57.01.18.01.43-.07.67.51.25.6.84 2.06.91 2.21.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.44.52-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.65-.07.17-.2.75-.87.95-1.17.2-.3.4-.25.67-.15.27.1 1.72.81 2.02.96.3.15.5.22.57.35.07.12.07.72-.18 1.41Z"/></svg>
-  <span class="fab-text">Chat</span>
+  <span class="fab-text">Get Quote</span>
 </a>
 
-<script src="assets/js/config.js?v=8"></script>
-<script src="assets/js/main.js?v=8"></script>
+<script src="assets/js/config.js?v=9"></script>
+<script src="assets/js/main.js?v=9"></script>
 </body>
 </html>
