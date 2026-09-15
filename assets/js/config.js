@@ -18,7 +18,7 @@ window.SITE = {
   serviceArea: "All of Singapore — HDB, condo, landed, commercial",
 
   // Pre-filled WhatsApp message when someone taps the button
-  whatsappMessage: "Hi! I'd like a quote for partition / painting work.",
+  whatsappMessage: "Hi! I'd like a quote for partition / painting work. I can send photos, dimensions and my postcode.",
 
   // ---- Formspree ----
   // Create a free form at formspree.io, copy the ID from the endpoint
