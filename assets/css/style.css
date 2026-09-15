@@ -1,3 +1,11 @@
+/* Self-hosted Plus Jakarta Sans, latin subset only.
+   Previously pulled from fonts.googleapis.com, which meant a render-blocking
+   stylesheet plus DNS+TLS to two extra hosts before any text could paint. */
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:400;font-display:swap;src:url('../fonts/plus-jakarta-sans-400.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:600;font-display:swap;src:url('../fonts/plus-jakarta-sans-600.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:700;font-display:swap;src:url('../fonts/plus-jakarta-sans-700.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:800;font-display:swap;src:url('../fonts/plus-jakarta-sans-800.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+
 /* ============================================================
    partitionwork.com — stylesheet
    Palette and spacing live in :root. Change a token, change the
@@ -230,6 +238,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 /* Marquee */
 .marquee{border-block:1px solid var(--line);background:var(--paper-2);overflow:hidden;padding:14px 0}
 .marquee-track{display:flex;gap:22px;white-space:nowrap;width:max-content;animation:slide 38s linear infinite}
+.marquee-set{display:flex;gap:22px;align-items:center}
 .marquee-track span{font-size:.85rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
@@ -509,6 +518,9 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
   .reveal{opacity:1;transform:none}
+  .marquee-track{width:100%;justify-content:center;white-space:normal}
+  .marquee-set{flex-wrap:wrap;justify-content:center;padding-inline:20px}
+  .marquee-set + .marquee-set{display:none}
 }
 
 @media print{
