@@ -26,6 +26,7 @@ window.SITE = {
   formspreeId: "XXXXXXX",             // TODO: replace with your real form ID
 
   // ---- Optional ----
-  uen: "",                            // Company UEN — leave "" to hide
+  uen: "201613746K",                  // Company UEN — leave "" to hide
+  address: "3026 Ubi Rd 1, #03-168, Singapore 408719",  // leave "" to hide
   instagram: "",                      // e.g. "https://instagram.com/yourhandle"
 };

@@ -38,6 +38,10 @@
       var uen = $('[data-uen]');
       if (uen) { uen.textContent = 'UEN ' + CFG.uen; uen.hidden = false; }
     }
+    if (CFG.address) {
+      var addr = $('[data-address]');
+      if (addr) { addr.textContent = CFG.address; addr.hidden = false; }
+    }
     var yr = $('#year');
     if (yr) yr.textContent = new Date().getFullYear();
   }
