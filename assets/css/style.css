@@ -439,7 +439,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 .footer-brand .brand-split{background:#FF8A5F}
 .footer-brand .brand-tld{color:#8A97A7}
 .footer-brand p{color:#A9B6C6;font-size:.92rem;margin:0}
-.uen{font-size:.82rem !important;margin-top:8px !important}
+.legal-line{font-size:.82rem !important;color:#8A97A7;margin-top:4px !important}
 .footer-nav{display:flex;flex-direction:column;gap:9px}
 .footer-nav a,.footer-contact a{color:#C9D3DE;text-decoration:none;font-size:.93rem;font-weight:600}
 .footer-nav a:hover,.footer-contact a:hover{color:#FF8A5F}
