@@ -11,8 +11,8 @@ window.SITE = {
 
   // ---- Contact ----
   // WhatsApp: country code + number, digits only. 65 = Singapore.
-  whatsapp: "6598575090",
-  whatsappDisplay: "+65 9857 5090",
+  whatsapp: "6583127675",
+  whatsappDisplay: "+65 8312 7675",
   email: "info@partitionwork.com",
   hours: "Mon–Sat, 9am – 7pm",
   serviceArea: "All of Singapore — HDB, condo, landed, commercial",
