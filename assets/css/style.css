@@ -574,3 +574,5 @@ body.lb-open{overflow:hidden}
 }
 
 .footer-brand .legal{color:#C9D3DE;font-weight:600;font-size:.9rem;margin-top:6px}
+.legal-line a[data-company-link]{color:#8A97A7;text-decoration:none}
+.legal-line a[data-company-link]:hover{color:#C9D3DE;text-decoration:underline}
