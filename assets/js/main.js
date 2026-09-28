@@ -34,6 +34,16 @@
     $$('[data-email-link]').forEach(function (el) {
       if (CFG.email) el.href = 'mailto:' + CFG.email + '?subject=' + encodeURIComponent('Quote enquiry via website');
     });
+    if (CFG.companyWebsite) {
+      var cw = $('[data-company-link]');
+      if (cw) {
+        cw.textContent = CFG.companyWebsite;
+        cw.href = /^https?:\/\//.test(CFG.companyWebsite) ? CFG.companyWebsite : 'https://' + CFG.companyWebsite;
+        cw.target = '_blank';
+        cw.rel = 'noopener';
+        cw.hidden = false;
+      }
+    }
     if (CFG.uen) {
       var uen = $('[data-uen]');
       if (uen) { uen.textContent = 'UEN ' + CFG.uen; uen.hidden = false; }
