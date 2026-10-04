@@ -311,7 +311,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;bac
 }
 .filter:hover{border-color:var(--ink);color:var(--ink)}
 .filter.is-active{background:var(--ink);border-color:var(--ink);color:#fff}
-.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 .shot{margin:0;transition:opacity .3s ease,transform .3s ease}
 .shot[hidden]{display:none}
 .shot .ph{transition:transform .4s ease}
