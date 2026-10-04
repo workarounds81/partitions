@@ -430,6 +430,22 @@
       });
     }
 
+    // A shot with data-steps opens its own photo sequence (e.g. mid-build
+    // then finished) instead of the whole gallery.
+    function shotItems(im) {
+      var f = im.closest('.shot');
+      var steps = f && f.getAttribute('data-steps');
+      if (steps) {
+        try {
+          return JSON.parse(steps).map(function (it) {
+            it.src = new URL(it.src, location.href).href; // match im.src
+            return it;
+          });
+        } catch (e) { /* fall through */ }
+      }
+      return galleryItems();
+    }
+
     function render() {
       var it = set[idx];
       if (!it) return;
@@ -492,7 +508,7 @@
       // is reachable), so don't stomp on it here.
       if (!im.hasAttribute('tabindex')) im.setAttribute('tabindex', '0');
       function go() {
-        var items = build();
+        var items = build(im);
         var i = 0;
         for (var k = 0; k < items.length; k++) {
           if (items[k].src === (im.currentSrc || im.src)) { i = k; break; }
@@ -505,7 +521,7 @@
       });
     }
     $$('.hc-slide img').forEach(function (im) { wire(im, heroItems); });
-    $$('.shot-img').forEach(function (im) { wire(im, galleryItems); });
+    $$('.shot-img').forEach(function (im) { wire(im, shotItems); });
   }
 
   /* ---------- Enquiry form ---------- */
