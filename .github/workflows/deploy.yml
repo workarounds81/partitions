@@ -78,6 +78,7 @@ jobs:
           fi
           rsync -a \
             --exclude '.git' --exclude '.github' --exclude 'node_modules' \
+            --exclude 'CLAUDE.md' \
             src/ "$DEST"/
           touch pages/.nojekyll
           test -d pages/.git
