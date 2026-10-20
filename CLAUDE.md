@@ -35,7 +35,7 @@ WhatsApp is the main conversion channel; the Formspree form is secondary.
 ## Cache busting — do this on every edit
 `?v=N` on style.css, config.js, main.js in index.html and style.css in
 404.html. Bump N everywhere (`sed -i 's/?v=27/?v=28/g' index.html 404.html`).
-Current: **v=29**.
+Current: **v=30**.
 
 ## Adding a project to "Our Work" (the most common request)
 The owner uploads a folder via GitHub web UI, usually to branch
@@ -61,7 +61,7 @@ The owner uploads a folder via GitHub web UI, usually to branch
      sequence (`shotItems()` in main.js); plain tiles browse the gallery.
 5. Gallery is 3 columns desktop / 2 tablet (≤1000px) / 1 phone (≤640px).
    Mention it to the owner if the tile count leaves an orphan on the last row.
-   Current: 15 tiles (10 flip tiles + 5 single photos).
+   Current: 16 tiles (11 flip tiles + 5 single photos).
 
 ## Testing before every push
 - `python3 -m http.server 8765` from the repo, then Playwright (installed
